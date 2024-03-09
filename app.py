@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, session, redirect, url_for
 from newspaper import Article
 import nltk
@@ -87,11 +88,7 @@ def analyze_text(text):
 # Function to connect to PostgreSQL database
 def connect_to_db():
     conn = psycopg2.connect(
-        dbname="newsdatabaseupdated",
-        user="postgres",
-        password="1857",
-        host="localhost",
-        port="5432"
+        db.name= os.environ ['postgres://newsdp_user:1OzMBGgqXC61A3D0Z3oXkYpnxg83uSzo@dpg-cnm94321hbls739fgst0-a5432/newsdp']
     )
     return conn
 
