@@ -1,5 +1,11 @@
 Flask
-newspaper3k
-nltk
 psycopg2
+beautifulsoup4  # bs4 is usually an alias for beautifulsoup4
+requests
+nltk
+textblob
+authlib
+Flask-SQLAlchemy  # Optional, for database interaction (consider using)
+Flask-WTF
+newspaper3k
 Flask-OAuthlib
