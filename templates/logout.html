@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Submission History</title>
+</head>
+<body>
+    <h1>URL Submission History</h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>URL</th>
+            <th>Number of Sentences</th>
+            <th>Number of Words</th>
+            <th>POS Tag Counts</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+            <td>{{ row[5] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="/logout">Logout</a>
+</body>
+</html>

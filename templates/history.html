@@ -1,0 +1,54 @@
+<!-- templates/history.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Article History</title>
+    <style>
+        /* Add your styles for the history page here */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>News Article History</h1>
+
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>URL</th>
+            <th>Num Sentences</th>
+            <th>Num Words</th>
+            <th>POS Counts</th>
+            <th>Actions</th>
+        </tr>
+        {% for item in data %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[2] }}</td>
+            <td>{{ item[3] }}</td>
+            <td>{{ item[4] }}</td>
+            <td><a href="{{ url_for('view_article', url=item[1], full_text=item[5]) }}">View</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <form action="{{ url_for('logout') }}" method="post">
+        <input type="submit" value="Logout">
+    </form>
+</body>
+</html>
