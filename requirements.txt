@@ -13,7 +13,7 @@ itsdangerous==2.0.1
 six==1.16.0
 authlib==0.15.3
 google-auth-oauthlib==0.4.6
-newspaper3k==0.2.9
+newspaper3k==0.2.7
 
 
 gunicorn
