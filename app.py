@@ -90,7 +90,7 @@ def analyze_text(text):
 # Function to connect to PostgreSQL database
 def connect_to_db():
     conn = psycopg2.connect(
-        db.name=os.environ['postgres://newsdp_user:1OzMBGgqXC61A3D0Z3oXkYpnxg83uSzo@dpg-cnm94321hbls739fgst0-a5432/newsdp'],
+        host = 'dpg-cnm94321hbls739fgst0-a', database = 'newsdp', user = 'newsdp_user', password= '1OzMBGgqXC61A3D0Z3oXkYpnxg83uSzo'
     )
     return conn
 
