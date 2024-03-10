@@ -8,4 +8,3 @@ authlib
 Flask-SQLAlchemy  # Optional, for database interaction (consider using)
 Flask-WTF
 newspaper3k
-Flask-OAuthlib
