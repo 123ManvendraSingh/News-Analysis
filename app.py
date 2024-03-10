@@ -92,7 +92,7 @@ def analyze_text(text):
 # Function to connect to PostgreSQL database
 def connect_to_db():
     conn = psycopg2.connect(
-        host = 'dpg-cnm94321hbls739fgst0-a', database = 'newsdp', user = 'newsdp_user', password= '1OzMBGgqXC61A3D0Z3oXkYpnxg83uSzo'
+        host = 'dpg-cnmtfu0cmk4c73ajmjr0-a', database = 'flaskdata_8tnh', user = 'manvendra', password= 'nxOcAYKzay848S6yATLY22JcCt183f6f'
     )
     return conn
 
