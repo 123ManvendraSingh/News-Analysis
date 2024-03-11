@@ -56,7 +56,8 @@ def create_table(conn):
     ''')
     conn.commit()
     cur.close()
-
+conn = connect_to_db()
+create_table(conn)
 # Route for home page
 @app.route('/')
 def home():
