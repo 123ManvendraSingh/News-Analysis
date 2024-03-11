@@ -1,76 +1,17 @@
-import os
 from flask import Flask, render_template, request, session, redirect, url_for
 from newspaper import Article
 import nltk
-nltk.download('all')
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from collections import Counter
 import psycopg2
 import json
-from flask_oauthlib.client import OAuth
-from werkzeug.urls import url_quote
+from urllib.parse import unquote
 
-nltk.download('punkt')
-nltk.download('stopwords')
 
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-
-GOOGLE_CLIENT_ID = '164891454040-p0tnb6nielg8gco0r2kffeioh7e86hq8.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = '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'
-
-oauth = OAuth(app)
-google = oauth.remote_app(
-    'google',
-    consumer_key=GOOGLE_CLIENT_ID,
-    consumer_secret=GOOGLE_CLIENT_SECRET,
-    request_token_params={
-        'scope': 'email',
-    },
-    base_url='https://www.googleapis.com/oauth2/v1/',
-    request_token_url=None,
-    access_token_method='POST',
-    access_token_url='https://accounts.google.com/o/oauth2/token',
-    authorize_url='https://accounts.google.com/o/oauth2/auth',
-)
-
-# Routes for Google OAuth login
-@app.route('/login-google')
-def login_google():
-    return google.authorize(callback=url_for('authorized_google', _external=True, _scheme='https'))
-
-# Routes for Google OAuth logout
-@app.route('/logout-google')
-def logout_google():
-    session.pop('google_token', None)
-    session.pop('admin', None)  # Clear admin session as well
-    return redirect(url_for('home'))
-
-# Route for Google OAuth authorized callback
-@app.route('/login/authorized-google')
-def authorized_google():
-    response = google.authorized_response()
-    if response is None or response.get('access_token') is None:
-        return 'Access denied: reason={} error={}'.format(
-            request.args['error_reason'],
-            request.args['error_description']
-        )
-
-    session['google_token'] = (response['access_token'], '')
-    user_info = google.get('userinfo')
-
-    # Check if the user is an admin or has the required credentials
-    if user_info.data.get('email') == 'mschundawat2004@gmail.com':
-        session['admin'] = True
-        return redirect(url_for('history'))
-    else:
-        return 'You are not authorized.'
-
-@google.tokengetter
-def get_google_oauth_token():
-    return session.get('google_token')
 
 # Function to clean the text
 def clean_text(text):
@@ -93,7 +34,11 @@ def analyze_text(text):
 # Function to connect to PostgreSQL database
 def connect_to_db():
     conn = psycopg2.connect(
-        host = 'dpg-cnmtfu0cmk4c73ajmjr0-a', database = 'flaskdata_8tnh', user = 'manvendra', password= 'nxOcAYKzay848S6yATLY22JcCt183f6f'
+        dbname="newsdatabaseupdated",
+        user="postgres",
+        password="1857",
+        host="localhost",
+        port="5432"
     )
     return conn
 
@@ -116,6 +61,43 @@ def create_table(conn):
 @app.route('/')
 def home():
     return render_template('index.html')
+
+# Route for password-based login
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if 'admin' in session or 'google_token' in session:
+        return redirect(url_for('history'))
+
+    if request.method == 'POST' and request.form['password'] == '123':
+        session['admin'] = True
+        return redirect(url_for('history'))
+
+    return render_template('login.html')
+
+# Route for viewing history
+@app.route('/history', methods=["GET", "POST"])
+def history():
+    if 'google_token' not in session and 'admin' not in session:
+        # Redirect to Google login if not logged in
+        return redirect(url_for('login'))
+
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute('''
+        SELECT * FROM news_articles;
+    ''')
+    data = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template('history.html', data=data)
+
+# Route for logging out
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('admin', None)
+    session.pop('google_token', None)
+    return redirect(url_for('home'))
 
 # Route for processing form submission
 @app.route('/process', methods=['POST'])
@@ -143,61 +125,35 @@ def process():
 
     return render_template('result.html', url=url, num_sentences=num_sentences, num_words=num_words, pos_counts=pos_counts, text=text)
 
-# Route for password-based login
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if 'admin' in session:
-        return redirect(url_for('history'))
+# Route for demo
+@app.route('/process', methods=['GET', 'POST'])
+def demo():
+    return render_template("demo.html")
 
-    if request.method == 'POST' and request.form['password'] == '123':
-        session['admin'] = True
-        return redirect(url_for('history'))
+@app.route('/view_article', methods=['GET'])
+def view_article():
+    if request.method == 'GET':
+        # Handle GET request data
+        article_id = request.args.get('id')
+        article_url = request.args.get('url')
+        num_sentences = request.args.get('num_sentences')
+        num_words = request.args.get('num_words')
+        pos_counts = request.args.get('pos_counts')
+        text = request.args.get('text')
 
-    return render_template('login.html')
+        # Use these variables as needed in your template
+        # data = {
+        #     'id': article_id,
+        #     'url': article_url,
+        #     'num_sentences': num_sentences,
+        #     'num_words': num_words,
+        #     'pos_counts': pos_counts
+        # }
+        data=[article_id, article_url, num_sentences, num_words, pos_counts, text]
 
-# Route for viewing history
-@app.route('/history')
-def history():
-    if 'google_token' not in session and 'admin' not in session:
-        # Redirect to Google login if not logged in
-        return redirect(url_for('login_google'))
+        return render_template('view_article.html', data=data)
 
-    conn = connect_to_db()
-    cur = conn.cursor()
-    cur.execute('''
-        SELECT * FROM news_articles;
-    ''')
-    data = cur.fetchall()
-    print(data)
-    cur.close()
-    conn.close()
-    return render_template('history.html', data=data)
 
-@app.route('/view-article/<path:url>', methods=['GET'])
-def view_article(url):
-    if 'google_token' not in session and 'admin' not in session:
-        # Redirect to Google login if not logged in
-        return redirect(url_for('login_google'))
-
-    conn = connect_to_db()
-    cur = conn.cursor()
-    cur.execute('''
-        SELECT * FROM news_articles WHERE url = %s;
-    ''', (url,))
-    data = cur.fetchone()
-    cur.close()
-    conn.close()
-
-    if not data:
-        return render_template('error.html', error='Article not found.')
-
-    return render_template('view_article.html', data=data)
-
-@app.route('/logout', methods=['GET', 'POST'])
-def logout():
-    session.pop('google_token', None)
-    session.pop('admin', None)
-    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)
