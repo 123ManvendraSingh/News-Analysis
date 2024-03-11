@@ -1,0 +1,61 @@
+<!-- templates/view_article.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Article</title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            background-image: url(static/bg.jpg);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        strong {
+            color: #007bff;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>View Article</h1>
+    <p><strong>URL:</strong> {{ data[1] }}</p>
+    <p><strong>Num Sentences:</strong> {{ data[2] }}</p>
+    <p><strong>Num Words:</strong> {{ data[3] }}</p>
+    <p><strong>POS Counts:</strong> {{ data[4] }}</p>
+    <p><strong>Full Text:</strong> {{ data[5] }}</p>
+
+    <form action="{{ url_for('history') }}" method="get">
+        <input type="submit" value="Back to History">
+    </form>
+</body>
+</html>
