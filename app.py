@@ -34,10 +34,10 @@ def analyze_text(text):
 # Function to connect to PostgreSQL database
 def connect_to_db():
     conn = psycopg2.connect(
-        dbname="newsdatabaseupdated",
-        user="postgres",
-        password="1857",
-        host="localhost",
+        dbname="newsdp",
+        user="newsdp_user",
+        password="1OzMBGgqXC61A3D0Z3oXkYpnxg83uSzo",
+        host="dpg-cnm94321hbls739fgst0-a",
         port="5432"
     )
     return conn
