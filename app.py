@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from newspaper import Article
 import nltk
+nltk.download('universal_tagset')
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from collections import Counter
